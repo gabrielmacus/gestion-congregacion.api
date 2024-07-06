@@ -1,0 +1,6 @@
+@gestion_congregacion.api_HostAddress = http://localhost:5010
+
+### GET {{gestion_congregacion.api_HostAddress}}/weatherforecast/
+### Accept: application/json
+
+###

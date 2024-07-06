@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  gestion-congregacion.api:
+    image: ${DOCKER_REGISTRY-}gestioncongregacionapi
+    build:
+      context: .
+      dockerfile: gestion-congregacion.api/Dockerfile
+  redis:
+    image: redis:latest
