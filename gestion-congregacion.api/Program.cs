@@ -30,9 +30,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
 
-var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"));
-builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
-multiplexer.GetServer(multiplexer.GetEndPoints().First()).FlushDatabase();
+//var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"));
+//builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
+//multiplexer.GetServer(multiplexer.GetEndPoints().First()).FlushDatabase();
 
 
 var app = builder.Build();
