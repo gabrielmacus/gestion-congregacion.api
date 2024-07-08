@@ -6,5 +6,9 @@ services:
     build:
       context: .
       dockerfile: gestion-congregacion.api/Dockerfile
+    environment:
+        - TZ=Etc/UTC
+        - ASPNETCORE_URLS=http://+:80
+        - ASPNETCORE_ENVIRONMENT=Production
   redis:
-    image: redis:latest
+    image: bitnami/redis:latest
