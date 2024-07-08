@@ -8,19 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
+    /*
     options.AddDefaultPolicy(policy => {
         policy.WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins"));
         policy.AllowAnyMethod();
         policy.AllowAnyHeader();
         policy.AllowCredentials();
     });
-    /*
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-    policy =>
-    {
-        policy.WithOrigins("http://example.com",
-                            "http://www.contoso.com");
-    });*/
+    */
 });
 
 builder.Services.AddControllers();
@@ -30,9 +25,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
 
-var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"));
-builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
-multiplexer.GetServer(multiplexer.GetEndPoints().First()).FlushDatabase();
+//var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"));
+//builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
+//multiplexer.GetServer(multiplexer.GetEndPoints().First()).FlushDatabase();
 
 
 var app = builder.Build();
