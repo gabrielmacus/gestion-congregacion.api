@@ -12,3 +12,5 @@ services:
         - ASPNETCORE_ENVIRONMENT=Production
   redis:
     image: bitnami/redis:latest
+    environment:
+        - REDIS_PASSWORD=${REDIS_PASSWORD}
