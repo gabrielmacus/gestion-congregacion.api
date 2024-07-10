@@ -4,14 +4,13 @@ using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
     
     options.AddPolicy("CorsPolicy", policy => {
         policy
-            .WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins"))
+            .WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins") ?? "")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()
@@ -28,7 +27,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
 
-var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"));
+var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis") ?? "");
 builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
 multiplexer.GetServer(multiplexer.GetEndPoints().First()).FlushDatabase();
 
