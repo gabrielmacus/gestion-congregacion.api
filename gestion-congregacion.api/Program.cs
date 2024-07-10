@@ -10,11 +10,12 @@ builder.Services.AddCors(options =>
 {
     
     options.AddPolicy("CorsPolicy", policy => {
-        policy.WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins"));
-        policy.AllowAnyMethod();
-        policy.AllowAnyHeader();
-        policy.AllowCredentials()
-        .WithExposedHeaders("Content-Disposition");
+        policy
+            .WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins"))
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .WithExposedHeaders("Content-Disposition");
         ;
     });
     
@@ -47,8 +48,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<StreamHub>("/hubs/stream/{Name}/{Participants:int}");
-
 app.UseCors("CorsPolicy");
+
+app.MapHub<StreamHub>("/hubs/stream/{Name}/{Participants:int}");
 
 app.Run();
