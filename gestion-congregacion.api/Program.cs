@@ -9,11 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     
-    options.AddDefaultPolicy(policy => {
+    options.AddPolicy("CorsPolicy", policy => {
         policy.WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins"));
         policy.AllowAnyMethod();
         policy.AllowAnyHeader();
-        policy.AllowCredentials();
+        policy.AllowCredentials()
+        .WithExposedHeaders("Content-Disposition");
+        ;
     });
     
 });
@@ -47,6 +49,6 @@ app.MapControllers();
 
 app.MapHub<StreamHub>("/hubs/stream/{Name}/{Participants:int}");
 
-app.UseCors();
+app.UseCors("CorsPolicy");
 
 app.Run();
