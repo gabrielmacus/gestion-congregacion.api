@@ -8,14 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
-    /*
+    
     options.AddDefaultPolicy(policy => {
         policy.WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins"));
         policy.AllowAnyMethod();
         policy.AllowAnyHeader();
         policy.AllowCredentials();
     });
-    */
+    
 });
 
 builder.Services.AddControllers();
