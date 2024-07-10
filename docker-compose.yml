@@ -10,5 +10,7 @@ services:
         - TZ=Etc/UTC
         - ASPNETCORE_URLS=http://+:80
         - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+        - redis
   redis:
     image: bitnami/redis:latest
