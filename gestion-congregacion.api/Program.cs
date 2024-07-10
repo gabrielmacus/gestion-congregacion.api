@@ -51,6 +51,7 @@ app.MapControllers();
 
 app.UseCors("CorsPolicy");
 
-app.MapHub<StreamHub>("/hubs/stream/{Name}/{Participants:int}");
+var pathPrefix = builder.Configuration.GetValue<string>("PathPrefix") ?? "";
+app.MapHub<StreamHub>("{pathPrefix}/hubs/stream/{Name}/{Participants:int}");
 
 app.Run();
