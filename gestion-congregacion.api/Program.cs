@@ -4,13 +4,15 @@ using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var allowedOrigins = builder.Configuration.GetValue<string>("AllowedOrigins") ?? "";
+Console.WriteLine($"Allowed origins: {allowedOrigins}");
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
     
     options.AddPolicy("CorsPolicy", policy => {
         policy
-            .WithOrigins(builder.Configuration.GetValue<string>("AllowedOrigins") ?? "")
+            .WithOrigins(allowedOrigins)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()
