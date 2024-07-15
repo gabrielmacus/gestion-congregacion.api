@@ -12,5 +12,9 @@ services:
         - ASPNETCORE_ENVIRONMENT=Production
     depends_on:
         - redis
+        - db
   redis:
     image: bitnami/redis:latest
+  db:
+    image: mysql:latest
+      

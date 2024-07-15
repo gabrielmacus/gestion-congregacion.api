@@ -16,3 +16,8 @@ services:
   redis:
     environment:
         - REDIS_PASSWORD=dT2G10fOS94a73EIDLivwY3L7dF2bSTBK8AcrbNn
+  db:
+    ports:
+        - "33306:3306"
+    environment:
+        - MYSQL_ROOT_PASSWORD=2c8sz14WYPQL
