@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 namespace gestion_congregacion.api.Features.Common
 {
 
-    public class CRUDController<TModel, TRepository> : ODataController //, ICRUDController<TModel>
-                where TModel : BaseDbModel
+    public class CRUDController<TModel, TRepository> : ODataController, ICRUDController<TModel>
+                where TModel : class
                 where TRepository : IBaseDbRepository<TModel>
     {
-        private readonly TRepository _repository;
+        protected readonly TRepository _repository;
         public CRUDController(TRepository repository)
         {
             _repository = repository;
@@ -29,14 +29,15 @@ namespace gestion_congregacion.api.Features.Common
 
             _repository.Add(model);
             await _repository.SaveChanges();
-            return Ok(model);
+            return Created(model);
         }
 
         /// <inheritdoc/>
         [HttpGet]
-        public virtual async Task<IEnumerable<TModel>> Get(ODataQueryOptions<TModel> options)
+        public virtual async Task<IActionResult> Get(ODataQueryOptions<TModel> options)
         {
-            return await _repository.Find(options);
+            var items = await _repository.Find(options);
+            return Ok(items);
         }
 
         /// <inheritdoc/>

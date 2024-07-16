@@ -9,7 +9,7 @@ namespace gestion_congregacion.api.Features.Common
     /// Interfaz para controladores CRUD genéricos.
     /// </summary>
     /// <typeparam name="TModel">El tipo de modelo de base de datos.</typeparam>
-    public interface ICRUDController<TModel> where TModel : BaseDbModel
+    public interface ICRUDController<TModel> where TModel : class
     {
         /// <summary>
         /// Crea un nuevo modelo.
@@ -22,8 +22,8 @@ namespace gestion_congregacion.api.Features.Common
         /// Obtiene una lista de modelos con opciones de consulta OData.
         /// </summary>
         /// <param name="options">Las opciones de consulta OData.</param>
-        /// <returns>Una lista de modelos.</returns>
-        Task<IEnumerable<TModel>> Get(ODataQueryOptions<TModel> options);
+        /// <returns>El resultado de la operación.</returns>
+        Task<IActionResult> Get(ODataQueryOptions<TModel> options);
 
         /// <summary>
         /// Obtiene un modelo por su clave.
@@ -53,6 +53,6 @@ namespace gestion_congregacion.api.Features.Common
         /// </summary>
         /// <param name="key">La clave del modelo.</param>
         /// <returns>El resultado de la operación.</returns>
-        Task<IActionResult> Delete([FromODataUri] int key);
+        Task<IActionResult> Delete([FromODataUri] long key);
     }
 }

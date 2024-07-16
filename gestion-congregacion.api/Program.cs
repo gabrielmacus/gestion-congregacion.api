@@ -6,6 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OData.ModelBuilder;
 using StackExchange.Redis;
 using gestion_congregacion.api.Features.Events;
+using Microsoft.AspNetCore.Identity;
+using gestion_congregacion.api.Features.Users;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using gestion_congregacion.api.Features.Roles;
+using Microsoft.AspNetCore.Mvc;
 
 
 
@@ -14,6 +19,39 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+#region Auth
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme, options => {
+    // Cookie settings
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+    options.LoginPath = "/Identity/Account/Login";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.SlidingExpiration = true;
+});
+builder.Services
+    .AddIdentityCore<User>(options =>
+    {
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequiredLength = 6;
+        options.Password.RequiredUniqueChars = 1;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
+        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+        options.User.RequireUniqueEmail = false;
+        options.SignIn.RequireConfirmedEmail = false;
+    })
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddSignInManager<SignInManager<User>>()
+    .AddApiEndpoints();
+#endregion
+
+#region CORS
 var allowedOrigins = builder.Configuration.GetValue<string>("AllowedOrigins") ?? "";
 builder.Services.AddCors(options =>
 {
@@ -29,7 +67,9 @@ builder.Services.AddCors(options =>
     });
     
 });
+#endregion
 
+#region ODATA
 builder.Services.AddControllers().AddOData(
     options => options
         .EnableQueryFeatures(builder.Configuration.GetValue<int>("MaxTop"))
@@ -40,12 +80,18 @@ builder.Services.AddControllers().AddOData(
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
+#endregion
 
 #region Repositories
 builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 #endregion
 
+#region Services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+#endregion
+
 
 var dbConnString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(
@@ -79,4 +125,17 @@ app.UseCors("CorsPolicy");
 var pathPrefix = builder.Configuration.GetValue<string>("PathPrefix") ?? "";
 app.MapHub<StreamHub>("{pathPrefix}/hubs/stream/{Name}/{Participants:int}");
 
+app.MapGroup($"{pathPrefix}/User").MapIdentityApi<User>().AddEndpointFilter(async (invocationContext, next) =>
+{
+    var disallowedEndpoints = new List<string> { "/User/register" };
+    var path = invocationContext.HttpContext.Request.Path;
+    if(disallowedEndpoints.Any(p => p == path.Value))
+    {
+        invocationContext.HttpContext.Response.StatusCode = 403;
+        return null;
+    }
+    return await next(invocationContext);
+}); ;
+
 app.Run();
+
