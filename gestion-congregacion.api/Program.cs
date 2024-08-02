@@ -11,6 +11,9 @@ using gestion_congregacion.api.Features.Users;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using gestion_congregacion.api.Features.Roles;
 using Microsoft.AspNetCore.Mvc;
+using gestion_congregacion.api.Features.Operations;
+using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 
@@ -18,18 +21,55 @@ using Microsoft.AspNetCore.Mvc;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+var modelBuilder = new ODataConventionModelBuilder();
+
+builder.Services.AddUsersFeature();
+builder.Services.AddPermissionsPolicy();
+builder.Services.AddPublishersFeature(modelBuilder);
+builder.Services.AddEventTypesFeature(modelBuilder);
+builder.Services.AddEventsFeature(modelBuilder);
 
 #region Auth
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme, options => {
-    // Cookie settings
-    options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+builder.Services.AddAuthentication(IdentityConstants.BearerScheme)
+    
+    .AddBearerToken(IdentityConstants.BearerScheme, options =>
+    {
+    })
+    .AddCookie(IdentityConstants.ApplicationScheme, options =>
+    {
+        // Cookie settings
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+        // https://stackoverflow.com/questions/38800919/how-to-return-401-instead-of-302-in-asp-net-core
+        // https://www.permit.io/blog/401-vs-403-error-whats-the-difference TODO: Read error encapsulation
 
-    options.LoginPath = "/Identity/Account/Login";
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-    options.SlidingExpiration = true;
-});
+        //options.Events.OnRedirectToLogin = context =>
+        //{
+        //    context.Response.StatusCode = context.HttpContext.User.Identity!.IsAuthenticated ? 403 : 401;
+        //    return Task.CompletedTask;
+        //};
+        options.SlidingExpiration = true;
+    })
+    /*
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+                System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    })*/;
+
+builder.Services.AddAuthorization();
+
 builder.Services
     .AddIdentityCore<User>(options =>
     {
@@ -49,6 +89,10 @@ builder.Services
     .AddEntityFrameworkStores<AppDbContext>()
     .AddSignInManager<SignInManager<User>>()
     .AddApiEndpoints();
+#endregion
+
+#region Filters
+builder.Services.AddScoped<ValidateModelFilter>();
 #endregion
 
 #region CORS
@@ -73,7 +117,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers().AddOData(
     options => options
         .EnableQueryFeatures(builder.Configuration.GetValue<int>("MaxTop"))
-        .AddRouteComponents("odata", AppModelBuilder.GetEdmModel())
+        .AddRouteComponents("odata", modelBuilder.GetEdmModel() /*AppModelBuilder.GetEdmModel()*/)
     );
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -82,11 +126,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 #endregion
 
-#region Repositories
-builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-#endregion
 
 #region Services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -95,7 +134,13 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var dbConnString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(
-    options => options.UseMySql(dbConnString, ServerVersion.AutoDetect(dbConnString))
+    options => { 
+        options.UseMySql(dbConnString, ServerVersion.AutoDetect(dbConnString));
+        #if DEBUG
+        //options.EnableSensitiveDataLogging(true);
+        //options.LogTo(Console.WriteLine);
+        #endif
+    }
 );
 
 if (!EF.IsDesignTime)
