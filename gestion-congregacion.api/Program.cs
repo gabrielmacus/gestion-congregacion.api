@@ -5,32 +5,34 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OData.ModelBuilder;
 using StackExchange.Redis;
-using gestion_congregacion.api.Features.Events;
 using Microsoft.AspNetCore.Identity;
 using gestion_congregacion.api.Features.Users;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using gestion_congregacion.api.Features.Roles;
-using Microsoft.AspNetCore.Mvc;
-using gestion_congregacion.api.Features.Operations;
-using System.Reflection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-
-
-
+using Hangfire;
+using Hangfire.MySql;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var modelBuilder = new ODataConventionModelBuilder();
 
+builder.Services.AddHangfire(builder.Configuration);
+builder.Services.AddPuppeteer();
+
 builder.Services.AddUsersFeature();
 builder.Services.AddPermissionsPolicy();
-builder.Services.AddPublishersFeature(modelBuilder);
-builder.Services.AddEventTypesFeature(modelBuilder);
-builder.Services.AddEventsFeature(modelBuilder);
 
+builder.Services.AddMeetingsFeature(modelBuilder);
+builder.Services.AddPublishersFeature(modelBuilder);
+builder.Services.AddMeetingEventsFeature(modelBuilder);
+
+
+builder.Services.AddFetchMeetingEventsFeature();
+    
 #region Auth
 builder.Services.AddAuthentication(IdentityConstants.BearerScheme)
     
@@ -165,6 +167,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseHangfire();
+
 app.UseCors("CorsPolicy");
 
 var pathPrefix = builder.Configuration.GetValue<string>("PathPrefix") ?? "";
@@ -180,7 +184,9 @@ app.MapGroup($"{pathPrefix}/User").MapIdentityApi<User>().AddEndpointFilter(asyn
         return null;
     }
     return await next(invocationContext);
-}); ;
+});
+
+app.UseFetchMeetingEventsFeature();
 
 app.Run();
 

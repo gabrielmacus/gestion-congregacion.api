@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using gestion_congregacion.api.Features.Common;
 
@@ -11,9 +12,11 @@ using gestion_congregacion.api.Features.Common;
 namespace gestion_congregacion.api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240802155406_meetings")]
+    partial class meetings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,7 +128,7 @@ namespace gestion_congregacion.api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("gestion_congregacion.api.Features.MeetingEvents.MeetingEvent", b =>
+            modelBuilder.Entity("gestion_congregacion.api.Features.EventTypes.EventType", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -139,9 +142,35 @@ namespace gestion_congregacion.api.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("Duration")
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("int");
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EventTypes");
+                });
+
+            modelBuilder.Entity("gestion_congregacion.api.Features.Events.Event", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<long?>("HelperId")
                         .HasColumnType("bigint");
@@ -149,24 +178,14 @@ namespace gestion_congregacion.api.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<long?>("MeetingId")
-                        .IsRequired()
+                    b.Property<long>("MeetingId")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("Order")
-                        .IsRequired()
+                    b.Property<int>("Order")
                         .HasColumnType("int");
 
                     b.Property<long?>("PublisherId")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("Section")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -424,7 +443,7 @@ namespace gestion_congregacion.api.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("gestion_congregacion.api.Features.MeetingEvents.MeetingEvent", b =>
+            modelBuilder.Entity("gestion_congregacion.api.Features.Events.Event", b =>
                 {
                     b.HasOne("gestion_congregacion.api.Features.Publishers.Publisher", "Helper")
                         .WithMany()

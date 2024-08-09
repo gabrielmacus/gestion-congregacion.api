@@ -30,6 +30,12 @@ namespace gestion_congregacion.api.Features.Common
         /// <returns>Una tarea que representa la operación de obtención de todas las entidades</returns>
         Task<IEnumerable<TModel>> GetAll(bool includeDeleted = false);
 
+        /// <summary>
+        /// Método para obtener una consulta IQueryable de las entidades de la base de datos.
+        /// </summary>
+        /// <param name="includeDeleted">Indica si se deben incluir las entidades eliminadas en la consulta (opcional, valor predeterminado: false)</param>
+        /// <returns>Una consulta IQueryable de las entidades</returns>
+        IQueryable<TModel> GetQuery(bool includeDeleted = false);
 
         /// <summary>
         /// Método asincrónico para buscar entidades en la base de datos.
@@ -41,7 +47,6 @@ namespace gestion_congregacion.api.Features.Common
         Task<IEnumerable<TMap>> Find<TMap>(
             ODataQueryOptions<TMap> options,
             bool includeDeleted = false) where TMap : class, IBaseModel, new();
-
 
         /// <summary>
         /// Método para buscar entidades en la base de datos a través de consultas dinámicas de odata.
@@ -61,6 +66,15 @@ namespace gestion_congregacion.api.Features.Common
         /// <param name="includeDeleted">Indica si se debe incluir la entidad eliminada en la consulta (opcional, valor predeterminado: false)</param>
         /// <returns>Una tarea que representa la operación de obtención de la entidad</returns>
         Task<TModel?> GetById(long id, bool includeDeleted = false);
+
+        /// <summary>
+        /// Método asincrónico para obtener una entidad de la base de datos por su identificador y opciones de consulta OData.
+        /// </summary>
+        /// <typeparam name="TMap">El tipo de entidad a buscar</typeparam>
+        /// <param name="id">El identificador de la entidad</param>
+        /// <param name="options">Las opciones de consulta OData</param>
+        /// <param name="includeDeleted">Indica si se debe incluir la entidad eliminada en la consulta (opcional, valor predeterminado: false)</param>
+        /// <returns>Una tarea que representa la operación de obtención de la entidad</returns>
         Task<TMap?> GetById<TMap>(long id, ODataQueryOptions<TMap> options, bool includeDeleted = false)
             where TMap : class, IBaseModel, new();
 

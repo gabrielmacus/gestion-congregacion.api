@@ -1,5 +1,5 @@
 ﻿using gestion_congregacion.api.Features.Common;
-using gestion_congregacion.api.Features.Events;
+using gestion_congregacion.api.Features.MeetingEvents;
 using System.ComponentModel.DataAnnotations;
 
 namespace gestion_congregacion.api.Features.Publishers
@@ -12,6 +12,5 @@ namespace gestion_congregacion.api.Features.Publishers
         [Required]
         [MaxLength(200)]
         public string Surname { get; set; } = string.Empty;
-        public ICollection<Event> Events { get; set; } = new List<Event>();
     }
 }

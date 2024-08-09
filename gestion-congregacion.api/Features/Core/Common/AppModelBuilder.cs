@@ -1,4 +1,4 @@
-﻿using gestion_congregacion.api.Features.Events;
+﻿using gestion_congregacion.api.Features.MeetingEvents;
 using gestion_congregacion.api.Features.Publishers;
 using gestion_congregacion.api.Features.Users;
 using gestion_congregacion.api.Features.Users.DTO;
@@ -14,7 +14,7 @@ namespace gestion_congregacion.api.Features.Common
         {
             var modelBuilder = new ODataConventionModelBuilder();
             modelBuilder.EntitySet<Publisher>("Publisher");
-            modelBuilder.EntitySet<Event>("Event");
+            modelBuilder.EntitySet<MeetingEvent>("Event");
 
             modelBuilder.EntitySet<User>("User");
             modelBuilder.EntitySet<UserDTO>("UserDTO");

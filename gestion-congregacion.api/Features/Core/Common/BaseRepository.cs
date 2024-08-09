@@ -83,6 +83,11 @@ namespace gestion_congregacion.api.Features.Common
             return  options.ApplyTo(querySet);
         }
 
+        public IQueryable<TModel> GetQuery(bool includeDeleted = false)
+        {
+            return includeDeleted ? _dbSet.AsQueryable() : _dbSet.Where(e => !e.IsDeleted);
+        }
+
         public async Task<TModel?> GetById(long id, bool includeDeleted = false)
         {
             var query = includeDeleted ? _dbSet.AsQueryable() : _dbSet.Where(e => !e.IsDeleted);
