@@ -16,7 +16,7 @@ public static partial class ServicesConfiguration
 
         services.AddScoped<UniqueOrderFilter>();
 
-        modelBuilder.EntitySet<MeetingEvent>("Event");
+        modelBuilder.EntitySet<MeetingEvent>("MeetingEvent");
     }
 
 }

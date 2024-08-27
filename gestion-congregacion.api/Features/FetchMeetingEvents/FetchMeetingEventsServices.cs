@@ -19,19 +19,6 @@ namespace gestion_congregacion.api.Features.FetchMeetingEvents
             _meetingRepository = meetingRepository;
         }  
 
-        public async Task SaveEventsFromJW()
-        {
-            var lastEvent = await _meetingRepository
-                .GetQuery()
-                .OrderByDescending( i => i.WeekDate)
-                .FirstOrDefaultAsync()
-                ;
-            //var lastEventDate = lastEvent?.WeekDate ?? ;
-
-
-            //await FetchEventsFromJW(new DateOnly(2024, 8, 5));
-        }
-
         public async Task<string> GetFetchScript()
         {
             var path = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "Features", "FetchMeetingEvents", "fetch-jw.js");
