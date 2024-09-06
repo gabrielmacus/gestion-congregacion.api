@@ -128,7 +128,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 #endregion
 
-
 #region Services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 #endregion
