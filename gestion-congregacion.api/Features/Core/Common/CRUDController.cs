@@ -32,17 +32,16 @@ namespace gestion_congregacion.api.Features.Common
         }
 
         [HttpGet]
-        public virtual async Task<IActionResult> Get(long key, ODataQueryOptions<T> options)
+        public virtual async Task<IActionResult> Get(long key)
         {
-            if (_readOperation is not null) return await _readOperation.Get(key, options);
+            if (_readOperation is not null) return await _readOperation.Get(key);
             return NotFound();
         }
 
         [HttpGet]
-        public virtual async Task<IActionResult> Get(ODataQueryOptions<T>  options, ODataValidationSettings validationSettings)
+        public virtual IQueryable<T> Get()
         {
-            if (_readOperation is not null) return await _readOperation.Get(options, validationSettings);
-            return NotFound();
+            return _readOperation.Get();
         }
 
         [HttpPost]

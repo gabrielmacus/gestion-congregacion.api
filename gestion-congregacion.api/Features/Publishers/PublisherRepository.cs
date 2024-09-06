@@ -4,8 +4,7 @@ namespace gestion_congregacion.api.Features.Publishers
 {
     public class PublisherRepository : BaseRepository<Publisher, AppDbContext>, IPublisherRepository
     {
-        public PublisherRepository(AppDbContext context, 
-            IMapper mapper) : base(context, mapper)
+        public PublisherRepository(AppDbContext context) : base(context)
         {
         }
 

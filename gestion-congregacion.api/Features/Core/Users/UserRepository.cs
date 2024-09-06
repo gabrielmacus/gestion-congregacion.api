@@ -11,8 +11,7 @@ namespace gestion_congregacion.api.Features.Users
 
         public UserRepository(
             AppDbContext context,
-            UserManager<User> userManager,
-            IMapper mapper) : base(context, mapper)
+            UserManager<User> userManager) : base(context)
         {
             _userManager = userManager;
         }

@@ -11,7 +11,7 @@ public static partial class ServicesConfiguration
         ODataConventionModelBuilder modelBuilder)
     {
         services.AddScoped<ICreateOperation<Publisher>, CreateOperation<Publisher, IPublisherRepository>>();
-        services.AddScoped<IReadOperation<Publisher>, ReadOperation<Publisher, Publisher, IPublisherRepository>>();
+        services.AddScoped<IReadOperation<Publisher>, ReadOperation<Publisher, IPublisherRepository>>();
         services.AddScoped<IUpdateOperation<Publisher>, UpdateOperation<Publisher, IPublisherRepository>>();
         services.AddScoped<IDeleteOperation<Publisher>, DeleteOperation<Publisher, IPublisherRepository>>();
 

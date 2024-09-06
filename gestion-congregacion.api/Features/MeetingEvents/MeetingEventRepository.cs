@@ -5,7 +5,7 @@ namespace gestion_congregacion.api.Features.MeetingEvents
 {
     public class MeetingEventRepository : BaseRepository<MeetingEvent, AppDbContext>, IMeetingEventRepository
     {
-        public MeetingEventRepository(AppDbContext context, IMapper mapper) : base(context, mapper)
+        public MeetingEventRepository(AppDbContext context) : base(context)
         {
         }
     }

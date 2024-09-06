@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace gestion_congregacion.api.Features.Users
 {
-    public interface IUserController : IReadOperation<UserDTO>
+    public interface IUserController : IReadOperation<User>
     {
         Task<IActionResult> Register([FromBody] RegisterRequestDTO data);
         Task<IActionResult> Unlock(long key);

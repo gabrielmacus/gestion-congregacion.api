@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace gestion_congregacion.api.Features.Operations
 {
-    public class ReadOperation<TMap, TModel, TRepository> : ODataController, IReadOperation<TMap>
+    public class ReadOperation<TModel, TRepository> : ODataController, IReadOperation<TModel>
             where TModel : class, IBaseModel, new()
-            where TMap : class, IBaseModel, new()
             where TRepository : IBaseRepository<TModel>
     {
         protected readonly TRepository _repository;
@@ -23,28 +22,17 @@ namespace gestion_congregacion.api.Features.Operations
         /// <inheritdoc/>
         /// <returns>Los modelos filtrados.</returns>
         /// 
-        public virtual async Task<IActionResult> Get(
-            ODataQueryOptions<TMap> options,
-            ODataValidationSettings validationSettings)
+        public virtual IQueryable<TModel> Get()
         {
-            options.Validate(validationSettings);
-
-            var shouldMap = typeof(TMap) != typeof(TModel);
-            if(shouldMap) return Ok(await _repository.Find(options));
-            return Ok(_repository.FindDynamic(options));
+            return _repository.GetQuery();
 
         }
 
         /// <inheritdoc/>
         /// <returns>El modelo encontrado.</returns>
-        public virtual async Task<IActionResult> Get(long key, ODataQueryOptions<TMap> options )
+        public virtual async Task<IActionResult> Get(long key)
         {
-            var validationSettings = new ODataValidationSettings();
-            validationSettings.AllowedQueryOptions =
-                AllowedQueryOptions.Select | AllowedQueryOptions.Expand;
-            options.Validate(validationSettings);
-
-            var model = await _repository.GetById(key, options);
+            var model = await _repository.GetById(key);
             if (model == null) return NotFound();
             return Ok(model);
         }

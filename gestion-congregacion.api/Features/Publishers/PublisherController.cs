@@ -21,10 +21,10 @@ namespace gestion_congregacion.api.Features.Publishers
         {
         }
 
-        public override Task<IActionResult> Get(ODataQueryOptions<Publisher> options, ODataValidationSettings validationSettings)
-        {
-            //validationSettings.AllowedQueryOptions = AllowedQueryOptions.Filter | AllowedQueryOptions.Top | AllowedQueryOptions.Skip;
-            return base.Get(options, validationSettings);
+        [EnableQuery]
+        public override IQueryable<Publisher> Get()
+        { 
+            return base.Get();
         }
 
         /*

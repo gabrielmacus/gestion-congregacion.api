@@ -8,7 +8,7 @@ public static partial class ServicesConfiguration
     public static void AddMeetingEventsFeature(this IServiceCollection services, ODataConventionModelBuilder modelBuilder)
     {
         services.AddScoped<ICreateOperation<MeetingEvent>, CreateOperation<MeetingEvent, IMeetingEventRepository>>();
-        services.AddScoped<IReadOperation<MeetingEvent>, ReadOperation<MeetingEvent, MeetingEvent, IMeetingEventRepository>>();
+        services.AddScoped<IReadOperation<MeetingEvent>, ReadOperation<MeetingEvent, IMeetingEventRepository>>();
         services.AddScoped<IUpdateOperation<MeetingEvent>, UpdateOperation<MeetingEvent, IMeetingEventRepository>>();
         services.AddScoped<IDeleteOperation<MeetingEvent>, DeleteOperation<MeetingEvent, IMeetingEventRepository>>();
 

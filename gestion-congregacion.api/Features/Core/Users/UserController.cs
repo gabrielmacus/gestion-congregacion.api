@@ -18,13 +18,13 @@ namespace gestion_congregacion.api.Features.Users
     {
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        private readonly IReadOperation<UserDTO> _readOperation;
+        private readonly IReadOperation<User> _readOperation;
         private readonly IDeleteOperation<User> _deleteOperation;
 
         public UserController(
             UserManager<User> userManager,
             IMapper mapper,
-            IReadOperation<UserDTO> readOperation,
+            IReadOperation<User> readOperation,
             IDeleteOperation<User> deleteOperation)
         {
             _userManager = userManager;
@@ -35,18 +35,15 @@ namespace gestion_congregacion.api.Features.Users
 
         [HttpGet]
         [HasPermission(Permission.UsersRead)]
-        public async Task<IActionResult> Get(
-            ODataQueryOptions<UserDTO> options,
-            ODataValidationSettings validationSettings)
+        public IQueryable<User> Get()
         {
-            validationSettings.AllowedQueryOptions = AllowedQueryOptions.Select;
-            return await _readOperation.Get(options, validationSettings);
+            return _readOperation.Get();
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(long key, ODataQueryOptions<UserDTO> options)
+        public async Task<IActionResult> Get(long key)
         {
-            return await _readOperation.Get(key, options);
+            return await _readOperation.Get(key);
         }
 
         [HttpPost]

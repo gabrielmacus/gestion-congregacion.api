@@ -5,8 +5,7 @@ namespace gestion_congregacion.api.Features.Roles
 {
     public class RoleRepository : BaseRepository<Role, AppDbContext>,IRoleRepository
     {
-        public RoleRepository(AppDbContext context, 
-            IMapper mapper) : base(context, mapper)
+        public RoleRepository(AppDbContext context) : base(context)
         {
         }
     }
